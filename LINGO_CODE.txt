@@ -1,0 +1,74 @@
+1.
+MODEL:
+MIN = (X-3)*(X-3) + (Y+4)*(Y+4) + (Z-5)*(Z-5);
+X <= 20;
+X >= -20;
+2*X*Y <= 5;
+2*Z - X >= -5;
+Y + Z*Z >= 0;
+END
+
+2.
+MODEL:
+SETS:
+VALUE/0..n/:U;
+LINKS(VALUE,VALUE):D,X;
+ENDSETS
+DATA: 
+D = ？;!从键盘键入距离矩阵;
+ENDDATA
+MIN = @SUM(LINKS:D*X);
+@FOR(VALUE(J):@SUM(VALUE(I)|I#NE#J:X(I,J)) = 1);
+@FOR(VALUE(I):@SUM(VALUE(J)|I#NE#J:X(I,J)) = 1);
+@FOR(LINKS(I,J)|I#NE#J#AND#I#GE#1:U(I) - U(J) + n*X(I,J) <= n-1;
+@FOR(LINKS:bin(X));!X取0或1;
+@FOR(VALUE(I):@FREE(U(I)));
+END
+
+3.
+MODEL:
+SETS:
+FUNC/1..2021/:x,f,g;
+LINKS(FUNC,FUNC):D,Y;
+ENDSTES
+MIN = @PROD(FUNC(I):f(I)) + @FOR(FUNC(I):@SUM(f(I) + g(I)));
+@FOR(FUNC(I):f(I) = @IF(@MOD(X(I),21) == 0, 3*X(I), 2*X(I)));
+@FOR(FUNC(I):g(I) = @IF(FUNC(I)#LE#1010, @ABS(X(I)) + @COS(X(I)), @SIN(X(I)) + SQRT(X(I))));
+@FOR(LINKS(I,J)|I#NE#J#AND#I#GT#1#AND#J#LT#2021:@FLOOR(X(I) - X(J) <= @SQRT(2)/2));
+@FOR(FUNC(I):@FREE(X(I)));
+END
+
+4.
+MODEL:
+SETS:
+row/1..9/;
+col/1..9/;
+num/1..9/;
+var(row,col,num):x;
+ENDSETS
+@FOR(col(j):@FOR(num(k):@SUM(var(i,j,k):x)=1));
+@FOR(row(i):@FOR(num(k):@SUM(var(i,j,k):x)=1));
+@FOR(row(i):@FOR(col(j):@SUM(var(i,j,k):x)=1));
+
+@FOR(num(k):@SUM(row(i)|i#ge#1#and#i#le#3:@SUM(col(j)|j#ge#1#and#j#le#3:x(i,j,k)))=1;
+@SUM(row(i)|i#ge#1#and#i#le#3:@SUM(col(j)|j#ge#4#and#j#le#6:x(i,j,k)))=1;
+@SUM(row(i)|i#ge#1#and#i#le#3:@SUM(col(j)|j#ge#7#and#j#le#9:x(i,j,k)))=1;
+@SUM(row(i)|i#ge#4#and#i#le#6:@SUM(col(j)|j#ge#1#and#j#le#3:x(i,j,k)))=1;
+@SUM(row(i)|i#ge#4#and#i#le#6:@SUM(col(j)|j#ge#4#and#j#le#6:x(i,j,k)))=1;
+@SUM(row(i)|i#ge#4#and#i#le#6:@SUM(col(j)|j#ge#7#and#j#le#9:x(i,j,k)))=1;
+@SUM(row(i)|i#ge#7#and#i#le#9:@SUM(col(j)|j#ge#1#and#j#le#3:x(i,j,k)))=1;
+@SUM(row(i)|i#ge#7#and#i#le#9:@SUM(col(j)|j#ge#4#and#j#le#6:x(i,j,k)))=1;
+@SUM(row(i)|i#ge#7#and#i#le#9:@SUM(col(j)|j#ge#7#and#j#le#9:x(i,j,k)))=1);
+!输入数独矩阵;
+x(1,1,8)=1;
+x(2,3,3)=1;x(2,4,6)=1;
+x(3,2,7)=1;x(3,5,9)=1;x(3,7,2)=1;
+x(4,2,5)=1;x(4,6,7)=1;
+x(5,5,4)=1;x(5,6,5)=1;x(5,7,7)=1;
+x(6,4,1)=1;x(6,8,3)=1;
+x(7,3,1)=1;x(7,8,6)=1;x(7,9,8)=1;
+x(8,3,8)=1;x(8,4,5)=1;x(8,8,1)=1;
+x(9,2,9)=1;x(9,7,4)=1;
+@FOR(var:@BIN(x));!0,1约束;
+END
+
